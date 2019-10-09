@@ -17,14 +17,19 @@ function fetchCoordinates(url){
                                 let lng = $(" .geo-default .geo-dms .longitude ", html)[0].children[0].data
 
                                 let parsedCoordinates = parseDMS( lat +" "+ lng ) // coordinates in decimal format
-                                resolve(parsedCoordinates)
+                                if( parsedCoordinates.Longitude && parsedCoordinates.Latitude){
+                                    resolve(parsedCoordinates)
+                                    //TODO: write all these coordinates to a file
+                                }else{
+                                    throw new Error()
+                                }
                             }catch(e){
-                                throw e;
+                                reject(link.toUpperCase());
                             }
                         }
                     ).catch(e => reject(e))
                 }catch(e){
-                    throw e;
+                    reject(e);
                 }
             }
         ).catch(e => reject(e))
