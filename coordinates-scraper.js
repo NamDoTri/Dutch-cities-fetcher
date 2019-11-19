@@ -1,23 +1,21 @@
-const rp = require('request-promise');
-const parseDMS = require('./coordinates-parser.js');
-const $ = require("cheerio");
-
 let readCityFile = require("./read-cities.js");
 let fetchCoordinates = require("./coordinates-fetcher.js");
 
-const baseURL = "https://en.wikipedia.org/w/api.php?action=opensearch&search="
+const baseURL = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" // Wikipedia search API 
 const cityPath = "./cities.json";
 
 let cities = [];
 let promises = [];
+let invalidLinks = [];
+let currentIteration = 0;
 
 (async function(){
-    let cities_undefined = await readCityFile(cityPath);
-    cities_undefined = cities_undefined.map( city => city.replace(/\s/g, "%20").toLowerCase() )
+    let cities_undefined = await readCityFile(cityPath); // read the city names from a file
+    cities_undefined = cities_undefined.map( city => city.replace(/\s/g, "%20") ) //replace white space in town names with '%20'
 
     for(let city of cities_undefined){
         promises.push(
-            fetchCoordinates(baseURL + city)
+            fetchCoordinates(baseURL + city, currentIteration)
             .then(
                 (res) => {
                     cities.push({
@@ -26,9 +24,10 @@ let promises = [];
                         latitude: res.Latitude,
                         province: res.province
                     })
+                    cities_undefined = cities_undefined.filter(c => c != city)
                 },
                 (rej) => {
-                    console.log("Rejected: " + rej)
+                    //continue
                 }
             )
         )
@@ -36,6 +35,7 @@ let promises = [];
     Promise.all(promises)
     .then(result => {
         console.log("Cities with coords: " + cities.length)
+        console.log(cities_undefined)
     })
 
 })()

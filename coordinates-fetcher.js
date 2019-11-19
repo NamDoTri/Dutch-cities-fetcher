@@ -2,13 +2,13 @@ const $ = require('cheerio');
 const rp = require('request-promise');
 const parseDMS = require("./coordinates-parser.js")
 
-function fetchCoordinates(url){
+function fetchCoordinates(url, iteration){
     return new Promise( (resolve, reject) => {
         rp(url)
         .then(
             res => {
                 try{
-                    let link = JSON.parse(res)[3][0];
+                    let link = JSON.parse(res)[3][iteration];
                     rp(link)
                     .then(
                         html => {
