@@ -15,7 +15,7 @@ function fetchCoordinates(url){
                             try{
                                 let lat = $(" .geo-default .geo-dms .latitude ", html)[0].children[0].data
                                 let lng = $(" .geo-default .geo-dms .longitude ", html)[0].children[0].data
-                                let province = $(".mw-parser-output .infobox", html)[0].children[0].children[7].children[1].children[0].children[0].data
+                                let province = $(".mw-parser-output .infobox", html)[0].children[0].children.filter(c => getProvince1(c) || getProvince2(c))
                                 let parsedCoordinates = parseDMS( lat +" "+ lng ) // coordinates in decimal format
                                 if( parsedCoordinates.Longitude && parsedCoordinates.Latitude){
                                     parsedCoordinates.province = province;
@@ -25,7 +25,10 @@ function fetchCoordinates(url){
                                     throw new Error()
                                 }
                             }catch(e){
-                                reject(link.toUpperCase());
+                                reject({
+                                    link: url,
+                                    message: e
+                                });
                             }
                         }
                     ).catch(e => reject(e))
@@ -39,3 +42,20 @@ function fetchCoordinates(url){
 
 module.exports = fetchCoordinates;
 
+//functions to handle different wikipedia page templates
+let getProvince1 = c => {
+    if(c.children[0]){
+        if(Array.isArray(c.children[0].children) && c.children[0].children[0] ){
+            if(Array.isArray(c.children[0].children[0].children) && c.children[0].children[0].children[0]){
+                return c.children[0].children[0].children[0].data== 'Province'
+            }
+        }
+    }
+}
+let getProvince2 = c => {
+    if(c.children[0]){
+        if(Array.isArray(c.children[0].children) && c.children[0].children[0] ){
+                return c.children[0].children[0].data== 'Province'
+        }
+    }
+}

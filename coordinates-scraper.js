@@ -36,7 +36,6 @@ let promises = [];
     Promise.all(promises)
     .then(result => {
         console.log("Cities with coords: " + cities.length)
-        console.log(cities)
     })
 
 })()
