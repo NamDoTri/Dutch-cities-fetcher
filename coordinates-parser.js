@@ -1,6 +1,5 @@
 function ConvertDMSToDD(degrees, minutes, direction) {
     var dd = (degrees||0) + (minutes/60||0) ;
-
     if (direction == "S" || direction == "W") {
         dd = dd * -1;
     } 

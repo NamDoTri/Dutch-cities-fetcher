@@ -1,3 +1,4 @@
+// import necessary packages and helper modules
 const $ = require('cheerio');
 const rp = require('request-promise');
 const parseDMS = require("./coordinates-parser.js")
@@ -13,14 +14,18 @@ function fetchCoordinates(url, iteration){
                     .then(
                         html => {
                             try{
+                                // scrape needed data
                                 let lat = $(" .geo-default .geo-dms .latitude ", html)[0].children[0].data
                                 let lng = $(" .geo-default .geo-dms .longitude ", html)[0].children[0].data
                                 let province = $(".mw-parser-output .infobox", html)[0].children[0].children.filter(c => getProvince1(c) || getProvince2(c))
+                                // because Wikipedia pages have different templates:
                                 try{
                                     province = province[0].children[1].children[0].children[0].data
                                 }catch(e){
                                     province = province[0].children[1].children[0].data
                                 }
+
+                                //configure a returned object when resolving promises
                                 let parsedCoordinates = parseDMS( lat +" "+ lng ) // coordinates in decimal format
                                 if( parsedCoordinates.Longitude && parsedCoordinates.Latitude){
                                     parsedCoordinates.province = province;
