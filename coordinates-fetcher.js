@@ -16,11 +16,15 @@ function fetchCoordinates(url, iteration){
                                 let lat = $(" .geo-default .geo-dms .latitude ", html)[0].children[0].data
                                 let lng = $(" .geo-default .geo-dms .longitude ", html)[0].children[0].data
                                 let province = $(".mw-parser-output .infobox", html)[0].children[0].children.filter(c => getProvince1(c) || getProvince2(c))
+                                try{
+                                    province = province[0].children[1].children[0].children[0].data
+                                }catch(e){
+                                    province = province[0].children[1].children[0].data
+                                }
                                 let parsedCoordinates = parseDMS( lat +" "+ lng ) // coordinates in decimal format
                                 if( parsedCoordinates.Longitude && parsedCoordinates.Latitude){
                                     parsedCoordinates.province = province;
                                     resolve(parsedCoordinates)
-                                    //TODO: write all these coordinates to a file
                                 }else{
                                     throw new Error()
                                 }

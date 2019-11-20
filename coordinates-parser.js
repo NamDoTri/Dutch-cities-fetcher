@@ -13,7 +13,7 @@ function parseDMS(input) {
     return {
         "Longitude": lng, 
         "Latitude": lat, 
-        toString: function(){
+        toString: function(){ //for testing, deletable
             return `Latitude: ${this.Latitude}\nLongitude: ${this.Longitude}`
     }}
 }
